@@ -1,6 +1,11 @@
 class ContactsController < ApplicationController
+  before_action :authenticate_user
+
   def index
     contacts = Contact.all
+    if params[:first_name_search]
+      contacts = contacts.where("first_name ILIKE ?", "%#{params[:first_name_search]}%")
+    end
     render json: contacts.as_json
   end
 
@@ -11,13 +16,19 @@ class ContactsController < ApplicationController
   end
 
   def create
-    contact = Contact.create(
+    contact = Contact.new(
       first_name: params[:first_name],
       last_name: params[:last_name],
+      mid_name: params[:mid_name],
       email: params[:email],
-      phone_number: params[:phone_number]
+      phone_number: params[:phone_number],
+      bio: params[:bio]
     )
-    render json: contact.as_json
+    if contact.save
+      render json: contact.as_json
+    else 
+      render json: {errors: contact.errors.full_messages}, status: :bad_request
+    end
   end
 
   def update
@@ -25,10 +36,15 @@ class ContactsController < ApplicationController
     contact = Contact.find_by(id: contact_id)
     contact.first_name = params[:first_name] || contact.first_name
     contact.last_name = params[:last_name] || contact.last_name
+    contact.mid_name = params[:mid_name] || contact.mid_name
     contact.email = params[:email] || contact.email
     contact.phone_number = params[:phone_number] || contact.phone_number
-    contact.save
-    render json: contact.as_json
+    contact.bio = params[:bio] || contact.bio
+    if contact.save
+      render json: contact.as_json
+    else 
+      render json: {errors: contact.errors.full_messages}, status: :bad_request
+    end
   end
 
   def destroy
@@ -37,4 +53,5 @@ class ContactsController < ApplicationController
     contact.destroy
     render json: "Contact eliminated"
   end
+
 end
