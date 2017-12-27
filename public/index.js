@@ -6,7 +6,8 @@ var HomePage = {
     return {
       // message: "Welcome to Vue.js!"
       contacts: [],
-      nameInclude: ""
+      nameInclude: "",
+      nameAttribute: "last_name"
     };
   },
   created: function() {
@@ -17,13 +18,24 @@ var HomePage = {
     );
   },
   methods: {
+    changeNameAttribute: function(inputAttribute) {
+      this.nameAttribute = inputAttribute;
+    },
     isNamePresent: function(name) {
       return name.first_name
         .toLowerCase()
         .includes(this.nameInclude.toLowerCase());
     }
   },
-  computed: {}
+  computed: {
+    sortedContacts: function() {
+      return this.contacts.sort(
+        function(person1, person2) {
+          return person1[this.nameAttribute] > person2[this.nameAttribute];
+        }.bind(this)
+      );
+    }
+  }
 };
 
 var ContactPage = {

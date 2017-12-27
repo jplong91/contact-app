@@ -11,6 +11,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 
+<link rel="stylesheet" href="contacts.css">
+
 <!-- VUE JS -->
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
@@ -65,16 +67,25 @@
 <template id="home-page">
   <div class="container">
     <div>
-      <input type="text" v-model="nameInclude" placeholder="Enter Name">
+      <button v-on:click="changeNameAttribute('first_name')">Sort by First Name</button>
+      <button v-on:click="changeNameAttribute('last_name')">Sort by Last Name</button>
     </div>
-    <div class="card" style="width: 20rem; margin: 10px; display: inline-block;" v-for="contact in contacts" v-if="isNamePresent(contact)">
-      <div class="card-body">
-        <h4 class="card-title">{{ contact.first_name }} {{ contact.last_name }}</h4>
-        <h6 class="card-subtitle mb-2 text-muted">{{ contact.email }}</h6>
-        <p class="card-text">{{ contact.phone_number }}</p>
-        <router-link class="btn btn-primary" v-bind:to="{ path: '/contacts/' + contact.id }">Full Info</router-link>
+    <div>
+      <input type="text" v-model="nameInclude" placeholder="Enter Name" list="names">
+      <datalist id="names">
+        <option v-for="contact in contacts">{{ contact.first_name }}</option>
+      </datalist>
+    </div>
+    <transition-group name="fade">
+      <div class="card" style="width: 20rem; margin: 10px; display: inline-block;" v-for="contact in sortedContacts" v-if="isNamePresent(contact)" v-bind:key="contact.id">
+        <div class="card-body">
+          <h4 class="card-title">{{ contact.first_name }} {{ contact.last_name }}</h4>
+          <h6 class="card-subtitle mb-2 text-muted">{{ contact.email }}</h6>
+          <p class="card-text">{{ contact.phone_number }}</p>
+          <router-link class="btn btn-primary" v-bind:to="{ path: '/contacts/' + contact.id }">Full Info</router-link>
+        </div>
       </div>
-    </div>
+    </transition-group>
   </div>
 </template>
 
