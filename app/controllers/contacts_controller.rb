@@ -22,7 +22,8 @@ class ContactsController < ApplicationController
       mid_name: params[:mid_name],
       email: params[:email],
       phone_number: params[:phone_number],
-      bio: params[:bio]
+      bio: params[:bio],
+      user_id: current_user.id
     )
     if contact.save
       render json: contact.as_json
